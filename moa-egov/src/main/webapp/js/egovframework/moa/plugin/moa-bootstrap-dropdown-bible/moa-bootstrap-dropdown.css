@@ -1,0 +1,89 @@
+@CHARSET "UTF-8";
+
+/* 성경 Dropdown */
+[id='searchVo.sortSeqNo.layer'] .dropdown-menu { width:600px; padding:3px; }
+[id='searchVo.sortSeqNo.layer'] .dropdown-menu table { width:100%; }
+[id='searchVo.sortSeqNo.layer'] .dropdown-menu td { width:20%; padding:1px; }
+
+/* chapter Dropdown */
+[id='searchVo.chapter.layer'] .dropdown-menu { width:500px; padding:3px; }
+[id='searchVo.chapter.layer'] .dropdown-menu table { width:100%; }
+[id='searchVo.chapter.layer'] .dropdown-menu td { width:10%; padding:1px; }
+
+/* Dropdown a */
+.dropdown-menu td a.default {
+	display:block;
+	padding: .2em;
+	text-align: center;
+	border:1px solid #C5C5C5;
+	background:#F8F8F8;
+	color:#454545;
+	text-decoration: none;
+}
+.dropdown-menu td a.default:hover {
+	display:block;
+	padding: .2em;
+	text-align: center;
+	border:1px solid #C5C5C5;
+	background:#E6E6E6;
+	color:#454545;
+	text-decoration: none;
+}
+.dropdown-menu td a.all {
+	display:block;
+	padding: .2em;
+	text-align: center;
+	border:1px solid #99A6B6;
+	background:#99A6B6;
+	color:#FFFFFF;
+	text-decoration: none;
+}
+.dropdown-menu td a.all:hover {
+	display:block;
+	padding: .2em;
+	text-align: center;
+	border:1px solid #C5C5C5;
+	background:#E6E6E6;
+	color:#454545;
+	text-decoration: none;
+}
+.dropdown-menu td a.white {
+	display:block;
+	padding: .2em;
+	text-align: center;
+	border:1px solid #99A6B6;
+	background:#FFFFFF;
+	color:#0D2C40;
+	text-decoration: none;
+}
+.dropdown-menu td a.white:hover {
+	display:block;
+	padding: .2em;
+	text-align: center;
+	border:1px solid #C5C5C5;
+	background:#E6E6E6;
+	color:#454545;
+	text-decoration: none;
+}
+.dropdown-menu td a.active,
+.dropdown-menu td a.active:hover
+.dropdown-menu td a.active:active {
+	display:block;
+	padding: .2em;
+	text-align: center;
+	border:1px solid #DDDDDD;
+	background:#F39814;
+	color:#FFFFFF;
+	text-decoration: none;
+}
+.dropdown-menu li a.active,
+.dropdown-menu li a.active:hover
+.dropdown-menu li a.active:active {
+	display:block;
+	padding: .2em;
+	text-align: center;
+	border:1px solid #DDDDDD;
+	background:#F39814;
+	color:#FFFFFF;
+	text-decoration: none;
+}

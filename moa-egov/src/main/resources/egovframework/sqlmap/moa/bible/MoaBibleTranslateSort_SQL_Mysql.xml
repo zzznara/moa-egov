@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="MoaBibleTranslateSortDAO">
+
+	<typeAlias alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	<typeAlias alias="moaBibleVo" type="egovframework.moa.bible.model.MoaBibleVO"/>
+	<typeAlias alias="moaBibleByTranslateVo" type="egovframework.moa.bible.model.MoaBibleByTranslateVO"/>
+	<typeAlias alias="moaBibleBySortVo" type="egovframework.moa.bible.model.MoaBibleBySortVO"/>
+	<typeAlias alias="moaBibleBySortChapterVo" type="egovframework.moa.bible.model.MoaBibleBySortChapterVO"/>
+ 	
+	<select id="MoaBibleTranslateSortDAO.getBibleByTranslateSeqNo" parameterClass="moaBibleByTranslateVo" resultClass="java.lang.Integer">
+		/* MoaBibleTranslateSortDAO.getBibleByTranslateSeqNo */
+		SELECT SEQ_NO
+		  FROM MOA_BIBLE_BY_TRANSLATE
+		 WHERE CODE = #code#
+	</select>
+
+	<insert id="MoaBibleTranslateSortDAO.insertBibleByTranslate" parameterClass="moaBibleByTranslateVo" >
+		/* MoaBibleTranslateSortDAO.insertBibleByTranslate */
+	    INSERT INTO MOA_BIBLE_BY_TRANSLATE
+	    (
+            CODE,
+            NAME,
+            LANGUAGE
+	    ) VALUES (
+            #code#,
+            #name#,
+            #language#
+	    )
+	</insert>
+
+	<delete id="MoaBibleTranslateSortDAO.deleteBibleByTranslate" parameterClass="moaBibleByTranslateVo" >
+		/* MoaBibleTranslateSortDAO.deleteBibleByTranslate */
+		DELETE
+		   FROM MOA_BIBLE_BY_TRANSLATE
+		 WHERE CODE = #code#
+		 	 AND LANGUAGE = #language#
+	</delete>
+ 	
+	<select id="MoaBibleTranslateSortDAO.getBibleBySortSeqNo" parameterClass="moaBibleBySortVo" resultClass="java.lang.Integer">
+		/* MoaBibleTranslateSortDAO.getBibleBySortSeqNo */
+		SELECT MIN(SEQ_NO) SEQ_NO
+		  FROM MOA_BIBLE_BY_SORT
+		 WHERE LANGUAGE = #language#
+		 	 AND (
+		 				LOWER( enum_name ) = LOWER( #enumName# )
+		 				OR
+		 				LOWER( name_short ) = LOWER( #enumName# )
+		 				OR
+		 				LOWER( name ) = LOWER( #enumName# )
+		 			)
+	</select>
+
+	<delete id="MoaBibleTranslateSortDAO.dropTranslateBible" parameterClass="moaBibleByTranslateVo">
+		/* MoaBibleTranslateSortDAO.dropTranslateBible */
+		DELETE FROM MOA_BIBLE
+		WHERE TRANSLATE_SEQ_NO = (
+						SELECT SEQ_NO
+						  FROM MOA_BIBLE_BY_TRANSLATE
+						WHERE CODE = #code#
+							AND LANGUAGE = #language#
+					)
+	</delete>
+
+	<select id="MoaBibleTranslateSortDAO.selectCountBibleVerseNum" parameterClass="moaBibleBySortChapterVo" resultClass="java.lang.Integer">
+		/* MoaBibleTranslateSortDAO.selectCountBibleVerseNum */
+	     SELECT COUNT(*)
+	       FROM MOA_BIBLE_BY_SORT_CHAPTER
+	   	 WHERE BIBLE_BY_SORT_SEQ_NO = #bibleBySortSeqNo#
+	   	 	 AND CHAPTER = #chapter#
+	</select>
+
+	<insert id="MoaBibleTranslateSortDAO.insertBibleVerseNum" parameterClass="moaBibleBySortChapterVo" >
+		/* MoaBibleTranslateSortDAO.insertBibleVerseNum */
+	    INSERT INTO MOA_BIBLE_BY_SORT_CHAPTER
+	    (
+            BIBLE_BY_SORT_SEQ_NO,
+            CHAPTER,
+            VERSE_NUM
+	    ) VALUES (
+            #bibleBySortSeqNo#,
+            #chapter#,
+            #verseNum#
+	    )
+	</insert>
+
+	<update id="MoaBibleTranslateSortDAO.updateBibleVerseNum" parameterClass="moaBibleBySortChapterVo" >
+		/* MoaBibleTranslateSortDAO.updateBibleVerseNum */
+	    UPDATE MOA_BIBLE_BY_SORT_CHAPTER
+	    	  SET VERSE_NUM = #verseNum#
+	   	 WHERE BIBLE_BY_SORT_SEQ_NO = #bibleBySortSeqNo#
+	   	 	 AND CHAPTER = #chapter#
+	</update>
+ 	
+	<select id="MoaBibleTranslateSortDAO.getBibleByTranslateListAjax" parameterClass="moaBibleVo" resultClass="egovMap">
+		/* MoaBibleTranslateSortDAO.getBibleByTranslateListAjax */
+		SELECT *
+		  FROM MOA_BIBLE_BY_TRANSLATE
+		 ORDER BY SEQ_NO
+	</select>
+ 	
+	<select id="MoaBibleTranslateSortDAO.getBibleByTranslateListComboAjax" parameterClass="moaBibleVo" resultClass="egovMap">
+		/* MoaBibleTranslateSortDAO.getBibleByTranslateListComboAjax */
+		SELECT SEQ_NO AS CODE,
+			   	   NAME
+		  FROM MOA_BIBLE_BY_TRANSLATE
+		 ORDER BY SEQ_NO
+	</select>
+ 	
+	<select id="MoaBibleTranslateSortDAO.getBibleBySortListAjax" parameterClass="moaBibleVo" resultClass="egovMap">
+		/* MoaBibleTranslateSortDAO.getBibleBySortListAjax */
+		SELECT S.*
+		  FROM MOA_BIBLE_BY_SORT S,
+		  		   MOA_BIBLE_BY_TRANSLATE T
+		WHERE S.LANGUAGE = T.LANGUAGE 
+			AND T.SEQ_NO = #translateSeqNo#
+		 ORDER BY S.SEQ_NO
+	</select>
+ 	
+	<select id="MoaBibleTranslateSortDAO.getBibleBySortListComboAjax" parameterClass="moaBibleVo" resultClass="egovMap">
+		/* MoaBibleTranslateSortDAO.getBibleBySortListComboAjax */
+		SELECT S.SEQ_NO AS CODE,
+			       S.NAME
+		  FROM MOA_BIBLE_BY_SORT S,
+		  		   MOA_BIBLE_BY_TRANSLATE T
+		WHERE S.LANGUAGE = T.LANGUAGE 
+			AND T.SEQ_NO = #translateSeqNo#
+		 ORDER BY S.SEQ_NO
+	</select>
+ 	
+	<select id="MoaBibleTranslateSortDAO.getBibleBySortListByLang" parameterClass="moaBibleByTranslateVo" resultClass="egovMap">
+		/* MoaBibleTranslateSortDAO.getBibleBySortListByLang */
+		SELECT *
+		  FROM MOA_BIBLE_BY_SORT
+		WHERE LANGUAGE = #language#
+		 ORDER BY SEQ_NO
+	</select>
+ 	
+</sqlMap>

@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="MoaBibleDAO">
+
+	<typeAlias alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	<typeAlias alias="moaBibleVo" type="egovframework.moa.bible.model.MoaBibleVO"/>
+	<typeAlias alias="moaBibleByTranslateVo" type="egovframework.moa.bible.model.MoaBibleByTranslateVO"/>
+	<typeAlias alias="moaBibleBySortVo" type="egovframework.moa.bible.model.MoaBibleBySortVO"/>
+	<typeAlias alias="moaBibleBySortChapterVo" type="egovframework.moa.bible.model.MoaBibleBySortChapterVO"/>
+ 	
+	<update id="MoaBibleDAO.saveBible" parameterClass="moaBibleVo" >
+		/* MoaBibleDAO.saveBible */
+		INSERT INTO MOA_BIBLE(
+			EVER_SEQ_NO,
+            TRANSLATE_SEQ_NO,
+            SORT_SEQ_NO,
+            TESTAMENT,
+            CHAPTER,
+            VERSE,
+            WORDS
+		) VALUES (
+			#everSeqNo#,
+            #translateSeqNo#,
+            #sortSeqNo#,
+            #testament#,
+            #chapter#,
+            #verse#,
+            #words#
+		)
+	</update>
+ 	
+	<select id="MoaBibleDAO.getBibleListAjax" parameterClass="moaBibleVo" resultClass="egovMap">
+		<![CDATA[
+			/* MoaBibleDAO.getBibleListAjax */
+			SELECT B.*,
+					   T.SEQ_NO AS TODAY_SEQ_NO
+			  FROM MOA_BIBLE B
+			   LEFT OUTER JOIN MOA_BIBLE_TODAY_WORDS T
+			 	 ON  (
+			 	  				   B.SORT_SEQ_NO = T.SORT_SEQ_NO
+			 	 			AND B.CHAPTER = T.CHAPTER
+			 	 			AND B.VERSE = T.VERSE
+			 	 		)
+			 WHERE 1 = 1
+		]]>
+		 	<isNotEqual prepend="AND" property="translateSeqNo" compareValue="0">
+	        	<![CDATA[ B.TRANSLATE_SEQ_NO = #translateSeqNo# ]]>
+		 	</isNotEqual>
+		 	<isNotEqual prepend="AND" property="sortSeqNo" compareValue="0">
+	        	<![CDATA[ B.SORT_SEQ_NO = #sortSeqNo# ]]>
+		 	</isNotEqual>
+	        <isNotEmpty prepend="AND" property="testament">
+	        	<![CDATA[ B.TESTAMENT = #testament# ]]>
+	        </isNotEmpty>
+		 	<isNotEqual prepend="AND" property="chapter" compareValue="0">
+	        	<![CDATA[ B.CHAPTER = #chapter# ]]>
+		 	</isNotEqual>
+		 	<isNotEqual prepend="AND" property="verse" compareValue="0">
+	        	<![CDATA[ B.VERSE = #verse# ]]>
+		 	</isNotEqual>
+		<![CDATA[
+			ORDER BY B.CHAPTER,
+						   B.VERSE
+		]]>
+	</select>
+ 	
+	<select id="MoaBibleDAO.getBibleListCountAjax" parameterClass="moaBibleVo" resultClass="egovMap">
+		<![CDATA[
+			/* MoaBibleDAO.getBibleListCountAjax */
+			SELECT CHAPTER_NUM,
+				   	   VERSE_NUM
+			  FROM (
+						SELECT CHAPTER_NUM,
+							   #sortSeqNo# AS SORT_SEQ_NO
+						  FROM MOA_BIBLE_BY_SORT
+						 WHERE 1 = 1
+		]]>
+					 	<isNotEqual prepend="AND" property="sortSeqNo" compareValue="0">
+				        	<![CDATA[ SEQ_NO = #sortSeqNo# ]]>
+					 	</isNotEqual>
+		<![CDATA[
+				   ) A,
+				   (
+						SELECT VERSE_NUM,
+							   #sortSeqNo# AS SORT_SEQ_NO
+						  FROM MOA_BIBLE_BY_SORT_CHAPTER
+						 WHERE 1 = 1
+		]]>
+					 	<isNotEqual prepend="AND" property="sortSeqNo" compareValue="0">
+				        	<![CDATA[ BIBLE_BY_SORT_SEQ_NO = #sortSeqNo# ]]>
+					 	</isNotEqual>
+					 	<isNotEqual prepend="AND" property="chapter" compareValue="0">
+				        	<![CDATA[ CHAPTER = #chapter# ]]>
+					 	</isNotEqual>
+		<![CDATA[
+				   ) B
+			 WHERE A.SORT_SEQ_NO = B.SORT_SEQ_NO
+		]]>					 	
+	</select>
+	
+	<select id="MoaBibleDAO.getBibleWordsAjax" parameterClass="moaBibleVo" resultClass="egovMap">
+		/* MoaBibleDAO.MoaBibleDAO.getBibleWordsAjax */
+		SELECT B.*,
+				   S.NAME AS SORT_BIBLE_NAME
+		  FROM MOA_BIBLE B,
+				   MOA_BIBLE_BY_SORT S,
+				   MOA_BIBLE_BY_TRANSLATE T
+		WHERE B.TRANSLATE_SEQ_NO = T.SEQ_NO
+			AND B.SORT_SEQ_NO = S.SEQ_NO
+		    AND S.LANGUAGE = T.LANGUAGE 
+			AND B.TRANSLATE_SEQ_NO = #translateSeqNo#
+			AND B.SORT_SEQ_NO = #sortSeqNo#
+			AND B.CHAPTER = #chapter#
+			AND B.VERSE = #verse#
+	</select>
+
+	<sql id="MoaBibleDAO.getBibleSearchListAjax_from_where">
+		<![CDATA[
+			/* MoaBibleSearchDAO.getBibleSearchListAjax_from_where */
+			  FROM MOA_BIBLE B,
+			  		   MOA_BIBLE_BY_SORT S,
+			  		   MOA_BIBLE_BY_TRANSLATE T
+			WHERE B.SORT_SEQ_NO = S.SEQ_NO
+				AND B.TRANSLATE_SEQ_NO = T.SEQ_NO
+				AND S.LANGUAGE = T.LANGUAGE 
+				AND T.SEQ_NO = #translateSeqNo#
+		]]>
+	 	<isNotEqual prepend="AND" property="translateSeqNo" compareValue="0">
+        	<![CDATA[ B.TRANSLATE_SEQ_NO = #translateSeqNo# ]]>
+	 	</isNotEqual>
+	 	<isNotEqual prepend="AND" property="sortSeqNo" compareValue="0">
+        	<![CDATA[ B.SORT_SEQ_NO = #sortSeqNo# ]]>
+	 	</isNotEqual>
+        <isNotEmpty prepend="AND" property="testament">
+        	<![CDATA[ B.TESTAMENT = #testament# ]]>
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="words">
+        	<![CDATA[ B.WORDS LIKE concat('%', #words#, '%') ]]>
+        </isNotEmpty>
+	</sql>
+
+	<select id="MoaBibleDAO.getBibleSearchListAjax" parameterClass="moaBibleVo" resultClass="egovMap">
+		<include refid="MoaIncludeDAO.pageHeader" />
+		/* MoaBibleDAO.getBibleSearchListAjax */
+		SELECT M.SEQ_NO,
+				   M.EVER_SEQ_NO,
+				   M.TRANSLATE_SEQ_NO,
+				   M.SORT_SEQ_NO,
+				   M.TESTAMENT,
+				   M.CHAPTER,
+       			   M.VERSE,
+       			   M.BIBLE_INDEX_NAME,
+				   M.WORDS,
+				   M.SORT_NAME,
+				   M.TODAY_SEQ_NO
+		  FROM (		  
+							SELECT B.SEQ_NO,
+									   B.EVER_SEQ_NO,
+									   B.TRANSLATE_SEQ_NO,
+									   B.SORT_SEQ_NO,
+									   B.TESTAMENT,
+									   B.CHAPTER,
+									   B.VERSE,
+					       			   Concat('[', B.SORT_NAME, ' ', cast(B.CHAPTER as char), ':', cast(B.VERSE as char), ']') AS BIBLE_INDEX_NAME,
+									   B.WORDS,
+									   B.SORT_NAME,
+									   T.SEQ_NO AS TODAY_SEQ_NO
+							  FROM (
+											SELECT B.*,
+													   S.NAME AS SORT_NAME
+											<include refid="MoaBibleDAO.getBibleSearchListAjax_from_where"/>
+							  		   ) B
+							   LEFT OUTER JOIN MOA_BIBLE_TODAY_WORDS T
+							 	 ON  (
+							 	  				   B.SORT_SEQ_NO = T.SORT_SEQ_NO
+							 	 			AND B.CHAPTER = T.CHAPTER
+							 	 			AND B.VERSE = T.VERSE
+							 	 		)
+							ORDER BY B.TRANSLATE_SEQ_NO,
+										   B.SORT_SEQ_NO,
+										   B.CHAPTER,
+										   B.VERSE
+		  		   ) M
+		<include refid="MoaIncludeDAO.pageFooter" />
+	</select>
+ 	
+	<select id="MoaBibleDAO.getBibleSearchListCountAjax" parameterClass="moaBibleVo" resultClass="java.lang.Integer">
+		/* MoaBibleDAO.getBibleSearchListCountAjax */
+		SELECT count(*)
+		<include refid="MoaBibleDAO.getBibleSearchListAjax_from_where"/>
+	</select>
+	
+</sqlMap>

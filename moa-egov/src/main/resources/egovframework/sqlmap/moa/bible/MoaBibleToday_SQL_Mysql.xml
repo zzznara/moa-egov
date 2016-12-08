@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+
+<sqlMap namespace="MoaBibleTodayDAO">
+
+	<typeAlias alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	<typeAlias alias="moaBibleVo" type="egovframework.moa.bible.model.MoaBibleVO"/>
+
+
+	<sql id="MoaBibleTodayDAO.getBibleTodayListAjax_from_where">
+		/* MoaBibleTodayDAO.getBibleTodayListAjax_from_where */
+		  FROM MOA_BIBLE_TODAY_WORDS W,
+		  		   MOA_BIBLE B,
+		  		   MOA_BIBLE_BY_TRANSLATE T,
+		  		   MOA_BIBLE_BY_SORT S
+		WHERE W.SORT_SEQ_NO = B.SORT_SEQ_NO
+			AND W.CHAPTER = B.CHAPTER
+			AND W.VERSE = B.VERSE
+			AND T.SEQ_NO = B.TRANSLATE_SEQ_NO
+			AND T.LANGUAGE = S.LANGUAGE
+			AND W.SORT_SEQ_NO = S.SEQ_NO
+	        <isEmpty property="translateSeqNo">
+	        	AND T.SEQ_NO = 1
+	        </isEmpty>
+	        <isNotEmpty property="translateSeqNo">
+	        	AND T.SEQ_NO = #translateSeqNo#
+	        </isNotEmpty>
+	</sql>
+
+	<select id="MoaBibleTodayDAO.getBibleTodayListAjax" parameterClass="moaBibleVo" resultClass="egovMap">
+		/* MoaBibleTodayDAO.getBibleTodayListAjax */
+		SELECT B.WORDS,
+				   W.SORT_SEQ_NO,
+				   W.CHAPTER,
+				   W.VERSE,
+				   S.ENUM_NAME,
+				   S.NAME_SHORT,
+				   S.NAME
+		<include refid="MoaBibleTodayDAO.getBibleTodayListAjax_from_where"/>
+		ORDER BY W.SORT_SEQ_NO,
+					   W.CHAPTER,
+					   W.VERSE
+		LIMIT #recordCountPerPage# OFFSET #firstIndex#
+	</select>
+ 	
+	<select id="MoaBibleTodayDAO.getBibleTodayListCountAjax" parameterClass="moaBibleVo" resultClass="java.lang.Integer">
+		/* MoaBibleTodayDAO.getBibleTodayListCountAjax */
+		SELECT COUNT(*)
+		<include refid="MoaBibleTodayDAO.getBibleTodayListAjax_from_where"/>
+	</select>
+
+	<select id="MoaBibleTodayDAO.getExistsBibleTodayCount" parameterClass="moaBibleVo" resultClass="java.lang.Integer">
+		/* MoaBibleTodayDAO.getExistsBibleTodayCount */
+		SELECT COUNT(*)
+		  FROM MOA_BIBLE_TODAY_WORDS
+		WHERE SORT_SEQ_NO = #sortSeqNo#
+			AND CHAPTER = #chapter#
+			AND VERSE = #verse#
+	</select>
+
+	<update id="MoaBibleTodayDAO.saveBibleToday" parameterClass="moaBibleVo" >
+		<![CDATA[
+			/* MoaBibleTodayDAO.saveBibleToday */
+			INSERT INTO MOA_BIBLE_TODAY_WORDS (
+	            SORT_SEQ_NO,
+	            CHAPTER,
+	            VERSE
+			) VALUES (
+	            #sortSeqNo#,
+	            #chapter#,
+	            #verse#
+			)
+		]]>
+	</update>
+
+	<delete id="MoaBibleTodayDAO.deleteBibleToday" parameterClass="moaBibleVo" >
+		<![CDATA[
+			/* MoaBibleTodayDAO.deleteBibleToday */
+			DELETE
+			   FROM MOA_BIBLE_TODAY_WORDS
+			WHERE SORT_SEQ_NO = #sortSeqNo#
+				AND CHAPTER = #chapter#
+				AND VERSE = #verse#
+		]]>
+	</delete>
+ 	
+</sqlMap>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMapConfig PUBLIC "-//iBATIS.com//DTD SQL Map Config 2.0//EN"
+    "http://www.ibatis.com/dtd/sql-map-config-2.dtd">
+
+
+<sqlMapConfig>
+	<!-- settings useStatementNamespaces="true" /--> 
+	<sqlMap resource="egovframework/sqlmap/moa/include/MoaInclude_SQL_Mysql.xml"/>
+	<sqlMap resource="egovframework/sqlmap/moa/bible/MoaBible_SQL_Mysql.xml"/>
+	<sqlMap resource="egovframework/sqlmap/moa/bible/MoaBibleSearch_SQL_Mysql.xml"/>
+	<sqlMap resource="egovframework/sqlmap/moa/bible/MoaBibleToday_SQL_Mysql.xml"/>
+	<sqlMap resource="egovframework/sqlmap/moa/bible/MoaBibleTranslateSort_SQL_Mysql.xml"/>
+</sqlMapConfig>
