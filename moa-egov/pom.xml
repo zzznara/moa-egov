@@ -515,7 +515,7 @@
                         <port>80</port>
                         <path>/</path>
                         <systemProperties>
-                            <JAVA_OPTS>-Xms256m -Xmx768m -XX:MaxPermSize=256m</JAVA_OPTS>
+                            <JAVA_OPTS>-Xms32m -Xmx68m -XX:MaxPermSize=32m</JAVA_OPTS>
                         </systemProperties>
                     </configuration>
                 </plugin>
